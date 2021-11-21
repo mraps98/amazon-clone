@@ -27,7 +27,7 @@ const Product: FC<IProductProps> = ({ product }) => {
       <h4 className="my-3">{product.title}</h4>
       <div className="flex">
         {Array(rating)
-          .fill()
+          .fill(0)
           .map((_, index) => (
             <StarIcon className="h-4 text-yellow-500" />
           ))}
