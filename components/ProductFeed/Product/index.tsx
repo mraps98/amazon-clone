@@ -23,13 +23,19 @@ const Product: FC<IProductProps> = ({ product }) => {
       <p className="absolute top-2 right-2 text-xs italic text-gray-400">
         {product.category}
       </p>
-      <Image src={product.image} height={200} width={200} objectFit="contain" />
+      <Image
+        src={product.image}
+        height={200}
+        width={200}
+        objectFit="contain"
+        alt={product.title}
+      />
       <h4 className="my-3">{product.title}</h4>
       <div className="flex">
         {Array(rating)
           .fill(0)
           .map((_, index) => (
-            <StarIcon className="h-4 text-yellow-500" />
+            <StarIcon key={index} className="h-4 text-yellow-500" />
           ))}
       </div>
 
