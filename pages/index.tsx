@@ -2,8 +2,14 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import Header from '../components/Header';
 import Banner from '../components/Banner';
+import ProductFeed from '../components/ProductFeed';
+import { IProduct } from '../interfaces';
 
-const Home: NextPage = () => {
+interface IHomePageProps {
+  productsFromApi: IProduct[];
+}
+
+const Home: NextPage<IHomePageProps> = ({ productsFromApi }) => {
   return (
     <div className="bg-gray-100">
       <Head>
@@ -19,9 +25,22 @@ const Home: NextPage = () => {
         <Banner />
 
         {/* Product Feed */}
+        <ProductFeed products={productsFromApi} />
       </main>
     </div>
   );
 };
 
 export default Home;
+
+export const getServerSideProps = async (context) => {
+  const productsFromApi: Array<IProduct> = await (
+    await fetch('https://fakestoreapi.com/products')
+  ).json();
+
+  return {
+    props: {
+      productsFromApi,
+    },
+  };
+};
