@@ -13,6 +13,7 @@ module.exports = {
   },
   variants: {
     extend: {},
+    gradientColorStops: ['responsive', 'focus', 'active', 'hover'],
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/line-clamp')],
 };

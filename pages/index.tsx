@@ -34,13 +34,17 @@ const Home: NextPage<IHomePageProps> = ({ productsFromApi }) => {
 export default Home;
 
 export const getServerSideProps = async (context) => {
-  const productsFromApi: Array<IProduct> = await (
-    await fetch('https://fakestoreapi.com/products')
-  ).json();
+  try {
+    const productsFromApi: Array<IProduct> = await (
+      await fetch('https://fakestoreapi.com/products')
+    ).json();
 
-  return {
-    props: {
-      productsFromApi,
-    },
-  };
+    return {
+      props: {
+        productsFromApi,
+      },
+    };
+  } catch (err) {
+    return { props: { productsFromApi: [] } };
+  }
 };
