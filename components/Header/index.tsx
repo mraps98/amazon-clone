@@ -6,15 +6,29 @@ import {
 } from '@heroicons/react/outline';
 import { FC } from 'react';
 import { signIn, signOut, useSession } from 'next-auth/client';
+import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+import { selectNumberOfItems } from '../../redux/reducers/cart';
 
 const Header: FC = () => {
   const [session] = useSession();
+  const router = useRouter();
+  const numberOfItemsInCart: number = useSelector(selectNumberOfItems);
+
+  const handleClickAmazonlogo = () => {
+    router.push('/');
+  };
+
+  const handleClickCartIcon = () => {
+    router.push('/checkout');
+  };
 
   return (
     <header className="sticky top-0 z-40">
       <div className="flex items-center bg-amazon_blue p-1 flex-grow py-2">
         <div className="mt-2 flex items-center flex-grow sm:flex-grow-0">
           <Image
+            onClick={handleClickAmazonlogo}
             src="https://links.papareact.com/f90"
             width={150}
             height={40}
@@ -33,7 +47,12 @@ const Header: FC = () => {
         </div>
 
         <div className="text-white flex items-center text-xs space-x-6 mx-6 whitespace-nowrap">
-          <div className="link" onClick={session ? signOut : signIn}>
+          <div
+            className="link"
+            onClick={() => {
+              session ? signOut() : signIn();
+            }}
+          >
             <p className="hover:underline">
               {session ? `Hello ${session?.user?.name}` : `Sign In`}{' '}
             </p>
@@ -43,9 +62,12 @@ const Header: FC = () => {
             <p>Returns</p>
             <p className="font-extrabold md:text-sm">& Orders</p>
           </div>
-          <div className="relative link flex items-center">
+          <div
+            className="relative link flex items-center"
+            onClick={handleClickCartIcon}
+          >
             <span className="rounded-full text-black text-center font-bold bg-yellow-400 absolute top-0 right-0 md:right-6 h-4 w-4">
-              0
+              {numberOfItemsInCart}
             </span>
             <ShoppingCartIcon className="h-10" />
             <p className="font-extrabold md:text-sm hidden md:inline">Cart</p>

@@ -3,6 +3,8 @@ import { IProduct } from '../../../interfaces';
 import Image from 'next/image';
 import { StarIcon } from '@heroicons/react/solid';
 import Currency from 'react-currency-formatter';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../../redux/actions/cart';
 
 interface IProductProps {
   product: IProduct;
@@ -12,11 +14,15 @@ const MAX_RATING = 5;
 const MIN_RATING = 1;
 
 const Product: FC<IProductProps> = ({ product }) => {
+  const dispatch = useDispatch();
   const [rating] = useState(
     Math.floor(Math.random() * (MAX_RATING - MIN_RATING + 1)) + MIN_RATING
   );
-
   const [hasPrime] = useState(Math.random() < 0.5);
+
+  const handleClickAddToCart = () => {
+    dispatch(addToCart({ ...product, rating, hasPrime }));
+  };
 
   return (
     <div className="relative flex flex-col m-5 bg-white z-30 p-10">
@@ -48,8 +54,10 @@ const Product: FC<IProductProps> = ({ product }) => {
 
       {hasPrime && (
         <div className="flex items-center space-x-2">
-          <img
-            className="w-12"
+          <Image
+            height={48}
+            width={48}
+            objectFit="contain"
             src="https://links.papareact.com/fdw"
             alt="prime"
           />
@@ -57,7 +65,9 @@ const Product: FC<IProductProps> = ({ product }) => {
         </div>
       )}
 
-      <button className="mt-auto button">Add to Cart</button>
+      <button className="mt-auto button" onClick={handleClickAddToCart}>
+        Add to Cart
+      </button>
     </div>
   );
 };
