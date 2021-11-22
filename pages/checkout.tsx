@@ -10,12 +10,44 @@ import {
 import CheckoutProduct from '../components/CheckoutProduct';
 import Currency from 'react-currency-formatter';
 import { useSession } from 'next-auth/client';
+import { loadStripe } from '@stripe/stripe-js';
+import axios from 'axios';
+import { create } from 'domain';
+
+const stripePromise = loadStripe(process.env.stripe_public_key!);
 
 const Checkout = () => {
   const [session] = useSession();
   const cartItems: Array<ICartReducerCartItem> = useSelector(selectItems);
   const numberOfItemsInCart = useSelector(selectNumberOfItems);
   const cartTotalAmount = useSelector(selectTotal);
+
+  const handleClickCheckout = () => {
+    createCheckoutSession();
+  };
+
+  const createCheckoutSession = async () => {
+    const stripe = await stripePromise;
+
+    if (!!stripe) {
+      const checkoutSessionRequestBody = {
+        cartItems,
+        email: session?.user?.email,
+      };
+      const checkoutSession = await axios.post(
+        '/api/create-checkout-session',
+        checkoutSessionRequestBody
+      );
+
+      try {
+        const result = await stripe.redirectToCheckout({
+          sessionId: checkoutSession.data.id,
+        });
+      } catch (err: any) {
+        alert(err?.reponse?.data?.error?.message || 'Error');
+      }
+    }
+  };
 
   return (
     <div className="bg-gray-100">
@@ -36,7 +68,7 @@ const Checkout = () => {
             <h1 className="text-3xl border-b pb-4">Your Shopping Cart</h1>
 
             {cartItems?.length > 0
-              ? cartItems?.map((item, index) => (
+              ? cartItems?.map((item) => (
                   <CheckoutProduct key={item.product.id} item={item} />
                 ))
               : 'Your Shopping Cart is empty'}
@@ -55,11 +87,13 @@ const Checkout = () => {
               </h2>
 
               <button
+                onClick={handleClickCheckout}
                 disabled={!session}
                 className={`button mt-2 ${
                   !session &&
                   'from-gray-300 to-gray-500 border-gray-200 text-gray-300 cursor-not-allowed'
                 }`}
+                role="link"
               >
                 {session ? 'Proceed to checkout' : 'Sign in to checkout'}
               </button>
