@@ -10,7 +10,7 @@
 - redux
 - fakestoreapi
 - stripe checkout session
-- nextauth
+- nextauth (login with google)
 
 ## features
 
