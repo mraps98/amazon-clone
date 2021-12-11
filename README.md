@@ -16,3 +16,4 @@
 
 - cart functionality
 - server side rendering
+- full responsive (mobile first approach)
